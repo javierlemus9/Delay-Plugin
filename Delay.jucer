@@ -9,6 +9,8 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="PkGWIR" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="K7f8z8" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
+      <FILE id="sp66tL" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="n7XLsG" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="UpynQm" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
