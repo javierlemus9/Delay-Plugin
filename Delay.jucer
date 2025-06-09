@@ -5,16 +5,18 @@
               cppLanguageStandard="20">
   <MAINGROUP id="dnxTpA" name="Delay">
     <GROUP id="{3C1EFCE2-1C98-45A2-317C-0F150555EA4C}" name="Source">
-      <FILE id="ECXIXR" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="PkGWIR" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
       <FILE id="K7f8z8" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
       <FILE id="sp66tL" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="n7XLsG" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="UpynQm" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="ECXIXR" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="PkGWIR" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
     </GROUP>
+    <FILE id="yP8OAZ" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
+    <FILE id="G0bqaw" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
