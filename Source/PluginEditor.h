@@ -31,10 +31,11 @@ private:
   
     DelayAudioProcessor& audioProcessor;
     
-    RotaryKnob gainKnob { "Gain" , audioProcessor.apvts, gainParamID, true};
-    RotaryKnob mixKnob { "Mix" , audioProcessor.apvts, mixParamID};
+    RotaryKnob gainKnob { "Gain", audioProcessor.apvts, gainParamID, true};
+    RotaryKnob mixKnob { "Mix", audioProcessor.apvts, mixParamID};
     RotaryKnob delayTimeKnob { "Time", audioProcessor.apvts, delayTimeParamID};
     RotaryKnob feedbackKnob { "Feedback", audioProcessor.apvts, feedbackParamID, true};
+    RotaryKnob stereoWidthKnob { "Stereo Width", audioProcessor.apvts, stereoWidthParamID, true};
     
     juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
     
