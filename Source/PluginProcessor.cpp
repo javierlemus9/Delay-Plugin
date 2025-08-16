@@ -119,6 +119,8 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     
     lastLowCut = -1.0f;
     lastHighCut = -1.0f;
+    
+    tempo.reset();
   
 }
 
@@ -156,6 +158,14 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     
     params.update();
     
+    tempo.update(getPlayHead());
+    
+    float syncedTime = float(tempo.getMillisecondsForNoteLength(params.delayNote));
+    
+    if (syncedTime > Parameters::maxDelayTime) {
+        syncedTime = Parameters::maxDelayTime;
+    }
+    
     float sampleRate = float(getSampleRate());
     
     auto mainInput = getBusBuffer(buffer, true, 0);
@@ -175,7 +185,8 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
             params.smoothen();
             
-            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+            float delayTime = params.tempoSync ? syncedTime : params.delayTime;
+            float delayInSamples = delayTime / 1000.0f * sampleRate;
             delayLine.setDelay(delayInSamples);
             
             if (params.lowCut != lastLowCut){
