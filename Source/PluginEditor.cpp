@@ -15,6 +15,14 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p): A
     delayGroup.setText("Delay");
     delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
     delayGroup.addAndMakeVisible(delayTimeKnob);
+    delayGroup.addChildComponent(delayNoteKnob);
+    
+    tempoSyncButton.setButtonText("Sync");
+    tempoSyncButton.setClickingTogglesState(true);
+    tempoSyncButton.setBounds(0, 0, 70, 27);
+    tempoSyncButton.setLookAndFeel(ButtonLookAndFeel::get());
+    delayGroup.addAndMakeVisible(tempoSyncButton);
+    
     addAndMakeVisible(delayGroup);
     
     feedbackGroup.setText("Feedback");
@@ -35,10 +43,14 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p): A
     
     
     setSize (500, 330);
+    
+    updateDelayKnobs(audioProcessor.params.tempoSyncParam->get());
+    audioProcessor.params.tempoSyncParam->addListener(this);
 }
 
 DelayAudioProcessorEditor::~DelayAudioProcessorEditor(){
     
+    audioProcessor.params.tempoSyncParam->removeListener(this);
     setLookAndFeel(nullptr);
 }
 
@@ -83,6 +95,8 @@ void DelayAudioProcessorEditor::resized(){
     
     
     delayTimeKnob.setTopLeftPosition(20, 20);
+    tempoSyncButton.setTopLeftPosition(20, delayTimeKnob.getBottom() + 10);
+    delayNoteKnob.setTopLeftPosition(delayTimeKnob.getX(), delayTimeKnob.getY());
     
     mixKnob.setTopLeftPosition(20, 20);
     gainKnob.setTopLeftPosition(20, mixKnob.getBottom() + 10);
@@ -93,4 +107,24 @@ void DelayAudioProcessorEditor::resized(){
     highCutKnob.setTopLeftPosition(lowCutKnob.getRight() + 20, lowCutKnob.getY());
     
 
+}
+
+void DelayAudioProcessorEditor::parameterValueChanged(int, float value){
+    
+    if (juce::MessageManager::getInstance()->isThisTheMessageThread()) {
+        updateDelayKnobs(value != 0.0f);
+    } else {
+        juce::MessageManager::callAsync([this, value]{
+            updateDelayKnobs(value != 0.0f);
+        });
+    }
+            
+    
+    DBG("parameter changed: " << value);
+}
+
+void DelayAudioProcessorEditor::updateDelayKnobs(bool tempoSyncActive){
+    
+    delayTimeKnob.setVisible(!tempoSyncActive);
+    delayNoteKnob.setVisible(tempoSyncActive);
 }

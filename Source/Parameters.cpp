@@ -87,6 +87,8 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts){
     castParameter(apvts, stereoWidthParamID, stereoWidthParam);
     castParameter(apvts, lowCutParamID, lowCutParam);
     castParameter(apvts, highCutParamID, highCutParam);
+    castParameter(apvts, tempoSyncParamID, tempoSyncParam);
+    castParameter(apvts, delayNoteParamID, delayNoteParam);
     
 }
 
@@ -155,6 +157,30 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
                                                            .withStringFromValueFunction(stringFromHz)
                                                            .withValueFromStringFunction(hzFromString)
                                                            ));
+    
+    layout.add(std::make_unique<juce::AudioParameterBool>(tempoSyncParamID, "Tempo Sync", false));
+    
+    juce::StringArray noteLengths = {
+        "1/32",
+        "1/16 triplet",
+        "1/32 dotted",
+        "1/16",
+        "1/8 triplet",
+        "1/16 dotted",
+        "1/8",
+        "1/4 triplet",
+        "1/8 dotted",
+        "1/4",
+        "1/2 triplet",
+        "1/4 dotted",
+        "1/2",
+        "1/1 triplet",
+        "1/2 dotted",
+        "1/1"
+    };
+    
+    layout.add(std::make_unique<juce::AudioParameterChoice>(delayNoteParamID, "DelayNote", noteLengths, 9));
+    
     return layout;
 }
 
@@ -172,6 +198,9 @@ void Parameters::update() noexcept{
     stereoWidthSmoother.setTargetValue(stereoWidthParam->get() * 0.01f);
     lowCutSmoother.setTargetValue(lowCutParam->get());
     highCutSmoother.setTargetValue(highCutParam->get());
+    
+    delayNote = delayNoteParam->getIndex();
+    tempoSync = tempoSyncParam->get();
     
 }
 

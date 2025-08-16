@@ -26,6 +26,8 @@
             file="Source/ProtectYourEars.h"/>
       <FILE id="yP8OAZ" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
       <FILE id="G0bqaw" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
+      <FILE id="QmtyOY" name="Tempo.cpp" compile="1" resource="0" file="Source/Tempo.cpp"/>
+      <FILE id="dAHMu2" name="Tempo.h" compile="0" resource="0" file="Source/Tempo.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
