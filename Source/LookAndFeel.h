@@ -38,6 +38,7 @@ namespace Colors {
     }
     
     namespace Button{
+        
         const juce::Colour text {80, 80, 80};
         const juce::Colour textToggled {40, 40, 40};
         const juce::Colour background {245, 240, 235};
@@ -46,6 +47,15 @@ namespace Colors {
         const juce::Colour gradientTop {250, 245, 240};
         const juce::Colour gradientBottom {240, 235, 230};
         const juce::Colour dropShadow {195, 190, 185};
+    }
+    
+    namespace LevelMeter{
+        
+        const juce::Colour background {245, 240, 235};
+        const juce::Colour tickLine { 200, 200, 200};
+        const juce::Colour tickLabel { 80, 80, 80};
+        const juce::Colour tooLoud { 226, 74, 81};
+        const juce::Colour levelOK { 65, 206, 88};
     }
 }
 
