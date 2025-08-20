@@ -12,6 +12,7 @@
 #include "Parameters.h"
 #include "Tempo.h"
 #include "DelayLine.h"
+#include "Measurement.h"
 
 //==============================================================================
 /**
@@ -19,6 +20,14 @@
 class DelayAudioProcessor  : public juce::AudioProcessor
 {
 public:
+    
+    juce::AudioProcessorValueTreeState apvts {
+        *this, nullptr, "Parameters", Parameters::createParameterLayout()
+    };
+    
+    Parameters params;
+    
+    Measurement levelL, levelR;
     //==============================================================================
     DelayAudioProcessor();
     ~DelayAudioProcessor() override;
@@ -55,12 +64,6 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    
-    juce::AudioProcessorValueTreeState apvts {
-        *this, nullptr, "Parameters", Parameters::createParameterLayout()
-    };
-    
-    Parameters params;
 
 private:
 

@@ -10,7 +10,10 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p): AudioProcessorEditor (&p), audioProcessor (p){
+DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
+    : AudioProcessorEditor (&p),
+      audioProcessor (p),
+      levelMeter(p.levelL, p.levelR){
     
     delayGroup.setText("Delay");
     delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -37,6 +40,7 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p): A
     outputGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
     outputGroup.addAndMakeVisible(gainKnob);
     outputGroup.addAndMakeVisible(mixKnob);
+    outputGroup.addAndMakeVisible(levelMeter);
     addAndMakeVisible(outputGroup);
     
     setLookAndFeel(&mainLF);
@@ -98,15 +102,14 @@ void DelayAudioProcessorEditor::resized(){
     tempoSyncButton.setTopLeftPosition(20, delayTimeKnob.getBottom() + 10);
     delayNoteKnob.setTopLeftPosition(delayTimeKnob.getX(), delayTimeKnob.getY());
     
-    mixKnob.setTopLeftPosition(20, 20);
-    gainKnob.setTopLeftPosition(20, mixKnob.getBottom() + 10);
-    
     feedbackKnob.setTopLeftPosition(20, 20);
     stereoWidthKnob.setTopLeftPosition(feedbackKnob.getRight() + 20, 20);
     lowCutKnob.setTopLeftPosition(feedbackKnob.getX(), feedbackKnob.getBottom() + 10);
     highCutKnob.setTopLeftPosition(lowCutKnob.getRight() + 20, lowCutKnob.getY());
     
-
+    mixKnob.setTopLeftPosition(20, 20);
+    gainKnob.setTopLeftPosition(20, mixKnob.getBottom() + 10);
+    levelMeter.setBounds(outputGroup.getWidth()- 45, 30, 30, gainKnob.getBottom() - 30);
 }
 
 void DelayAudioProcessorEditor::parameterValueChanged(int, float value){

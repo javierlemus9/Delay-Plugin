@@ -13,6 +13,7 @@
 #include "Parameters.h"
 #include "RotaryKnob.h"
 #include "LookAndFeel.h"
+#include "LevelMeter.h"
 
 //==============================================================================
 /**
@@ -29,12 +30,7 @@ public:
     void resized() override;
 
 private:
-    
-    void parameterValueChanged(int, float) override;
-    
-    void parameterGestureChanged(int, bool) override {}
-    
-    void updateDelayKnobs(bool tempoSyncActive);
+
   
     DelayAudioProcessor& audioProcessor;
     
@@ -57,6 +53,13 @@ private:
     
     MainLookAndFeel mainLF;
     
+    LevelMeter levelMeter;
+    
+    void parameterValueChanged(int, float) override;
+    
+    void parameterGestureChanged(int, bool) override {}
+    
+    void updateDelayKnobs(bool tempoSyncActive);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessorEditor)
 };
