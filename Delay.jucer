@@ -5,6 +5,7 @@
               cppLanguageStandard="20">
   <MAINGROUP id="dnxTpA" name="Delay">
     <GROUP id="{D7DF7291-7D3B-6D90-C33D-DE2DD74BF770}" name="Assets">
+      <FILE id="qhSLpe" name="Bypass.png" compile="0" resource="1" file="../BeginnerBookAudioProgramming/Resources/Bypass.png"/>
       <FILE id="tIyE6d" name="Lato-Medium.ttf" compile="0" resource="1" file="../../../Downloads/Lato-Medium.ttf"/>
       <FILE id="XjFT5m" name="Logo.png" compile="0" resource="1" file="../../../Downloads/Logo.png"/>
       <FILE id="tjvZ7h" name="Noise.png" compile="0" resource="1" file="../../../Downloads/Noise.png"/>

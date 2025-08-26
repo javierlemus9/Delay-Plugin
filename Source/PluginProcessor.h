@@ -64,6 +64,8 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    juce::AudioProcessorParameter* getBypassParameter() const override;
 
 private:
 
@@ -79,6 +81,22 @@ private:
     float lastHighCut = -1.0f;
     
     Tempo tempo;
+    
+    /* crossfade implementation
+    float delayInSamples = 0.0f;
+    float targetDelay = 0.0f;
+    float xFade = 0.0f;
+    float xFadeInc = 0.0f;
+    */
+    
+    // ducking implementation
+    float delayInSamples = 0.0f;
+    float targetDelay = 0.0f;
+    float fade = 0.0f;
+    float fadeTarget = 0.0f;
+    float coeff = 0.0f;
+    float wait = 0.0;
+    float waitInc = 0.0f;
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessor)

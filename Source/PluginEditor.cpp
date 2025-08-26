@@ -10,10 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
-    : AudioProcessorEditor (&p),
-      audioProcessor (p),
-      levelMeter(p.levelL, p.levelR){
+DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : AudioProcessorEditor (&p), audioProcessor (p), levelMeter(p.levelL, p.levelR){
     
     delayGroup.setText("Delay");
     delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -44,7 +41,26 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
     addAndMakeVisible(outputGroup);
     
     setLookAndFeel(&mainLF);
+          
+    auto bypassIcon = juce::ImageCache::getFromMemory(BinaryData::Bypass_png, BinaryData::Bypass_pngSize);
     
+    bypassButton.setClickingTogglesState(true);
+    bypassButton.setBounds(0, 0, 20, 20);
+    bypassButton.setImages(false,
+                           true,
+                           true,
+                           bypassIcon,
+                           1.0f,
+                           juce::Colours::white,
+                           bypassIcon,
+                           1.0f,
+                           juce::Colours::white,
+                           bypassIcon,
+                           1.0f,
+                           juce::Colours::grey,
+                           0.0f);
+    
+    addAndMakeVisible(bypassButton);
     
     setSize (500, 330);
     
@@ -110,6 +126,8 @@ void DelayAudioProcessorEditor::resized(){
     mixKnob.setTopLeftPosition(20, 20);
     gainKnob.setTopLeftPosition(20, mixKnob.getBottom() + 10);
     levelMeter.setBounds(outputGroup.getWidth()- 45, 30, 30, gainKnob.getBottom() - 30);
+    
+    bypassButton.setTopLeftPosition(bounds.getRight() - bypassButton.getWidth() - 10, 10);
 }
 
 void DelayAudioProcessorEditor::parameterValueChanged(int, float value){
