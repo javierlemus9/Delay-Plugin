@@ -55,6 +55,12 @@ private:
     
     LevelMeter levelMeter;
     
+    juce::ImageButton bypassButton;
+    
+    juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment{
+        audioProcessor.apvts, bypassParamID.getParamID(), bypassButton
+    };
+    
     void parameterValueChanged(int, float) override;
     
     void parameterGestureChanged(int, bool) override {}

@@ -124,7 +124,19 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     
     levelL.reset();
     levelR.reset();
-  
+    
+    delayInSamples = 0.0f;
+    targetDelay = 0.0f;
+    fade = 1.0f;
+    fadeTarget = 1.0f;
+    coeff = 1.0f - std::exp(-1.0f / (0.05f * float(sampleRate)));
+    wait = 0.0f;
+    waitInc = 1.0f / (0.3f * float(sampleRate)); // 300ms
+    
+    /* crossfade implementation
+    xFade = 0.0f;
+    xFadeInc = static_cast<float>(1.0 / (0.05 * sampleRate)); // 50ms
+    */
 }
 
 void DelayAudioProcessor::releaseResources()
@@ -191,8 +203,36 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
             params.smoothen();
             
+            /* crossfade implementation
+            if (xFade == 0.0f) {
+                float delayTime = params.tempoSync ? syncedTime : params.delayTime;
+                targetDelay = delayTime / 1000.0f * sampleRate;
+                
+                if (delayInSamples == 0.0f) {
+                    delayInSamples = targetDelay;
+                }
+                
+                else if (targetDelay != delayInSamples) {
+                    xFade = xFadeInc;
+                }
+            }
+            */
+            
             float delayTime = params.tempoSync ? syncedTime : params.delayTime;
-            float delayInSamples = delayTime / 1000.0f * sampleRate;
+            float newTargetDelay = delayTime / 1000.0f * sampleRate;
+            
+            if (newTargetDelay != targetDelay) {
+                targetDelay = newTargetDelay;
+                
+                if (delayInSamples == 0.0f) {
+                    delayInSamples = targetDelay;
+                }
+                
+                else {
+                    wait = waitInc;
+                    fadeTarget = 0.0f;
+                }
+            }
             
             if (params.lowCut != lastLowCut){
                 lowCutFilter.setCutoffFrequency(params.lowCut);
@@ -215,6 +255,35 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             float wetL = delayLineL.read(delayInSamples);
             float wetR = delayLineR.read(delayInSamples);
             
+            fade += (fadeTarget - fade) * coeff;
+            wetL *= fade;
+            wetR *= fade;
+            
+            if (wait > 0.0f) {
+                wait += waitInc;
+                if (wait >= 1.0f) {
+                    delayInSamples = targetDelay;
+                    wait = 0.0f;
+                    fadeTarget = 1.0f; // fade in
+                }
+            }
+            
+            /* crossfade implementation
+            if (xFade > 0.0f) {
+                float newL = delayLineL.read(targetDelay);
+                float newR = delayLineR.read(targetDelay);
+                
+                wetL = (1.0f - xFade) * wetL + xFade * newL;
+                wetR = (1.0f - xFade) * wetR + xFade * newR;
+                
+                xFade += xFadeInc;
+                if (xFade >= 1.0f) {
+                    delayInSamples = targetDelay;
+                    xFade = 0.0f;
+                }
+            }
+            */
+            
             feedbackL = wetL * params.feedback;
             feedbackL = lowCutFilter.processSample(0, feedbackL);
             feedbackL = highCutFilter.processSample(0, feedbackL);
@@ -228,6 +297,11 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             
             float outL = mixL * params.gain;
             float outR = mixR * params.gain;
+            
+            if (params.bypassed) {
+                outL = dryL;
+                outR = dryR;
+            }
             
             outputDataL[sample] = outL;
             outputDataR[sample] = outR;
@@ -264,6 +338,11 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 #if JUCE_DEBUG
     protectYourEars(buffer);
 #endif 
+}
+
+juce::AudioProcessorParameter* DelayAudioProcessor::getBypassParameter() const {
+    
+    return params.bypassParam;
 }
 
 //==============================================================================

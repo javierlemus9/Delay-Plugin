@@ -89,6 +89,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts){
     castParameter(apvts, highCutParamID, highCutParam);
     castParameter(apvts, tempoSyncParamID, tempoSyncParam);
     castParameter(apvts, delayNoteParamID, delayNoteParam);
+    castParameter(apvts, bypassParamID, bypassParam);
     
 }
 
@@ -160,6 +161,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
     
     layout.add(std::make_unique<juce::AudioParameterBool>(tempoSyncParamID, "Tempo Sync", false));
     
+    layout.add(std::make_unique<juce::AudioParameterBool>(bypassParamID, "Bypass", false));
+    
     juce::StringArray noteLengths = {
         "1/32",
         "1/16 triplet",
@@ -201,6 +204,7 @@ void Parameters::update() noexcept{
     
     delayNote = delayNoteParam->getIndex();
     tempoSync = tempoSyncParam->get();
+    bypassed = bypassParam->get();
     
 }
 
@@ -239,7 +243,7 @@ void Parameters::reset() noexcept{
 void Parameters::smoothen() noexcept{
     
     gain = gainSmoother.getNextValue();
-    delayTime += (targetDelayTime - delayTime) * onePoleSmoothingCoefficient;
+    delayTime = targetDelayTime;
     mix = mixSmoother.getNextValue();
     feedback = feedbackSmoother.getNextValue();
     panningEqualPowerLaw(stereoWidthSmoother.getNextValue(), panL, panR);
