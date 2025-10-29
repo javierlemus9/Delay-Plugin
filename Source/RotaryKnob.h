@@ -22,6 +22,8 @@ public:
                bool drawFromMiddle = false);
     
     ~RotaryKnob() override;
+    
+    void paint(juce::Graphics&) override;
 
     void resized() override;
     

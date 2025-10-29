@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Theme.h"
 
 //==============================================================================
 DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : AudioProcessorEditor (&p), audioProcessor (p), levelMeter(p.levelL, p.levelR){
@@ -19,8 +20,6 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : 
     
     tempoSyncButton.setButtonText("Sync");
     tempoSyncButton.setClickingTogglesState(true);
-    tempoSyncButton.setBounds(0, 0, 70, 27);
-    tempoSyncButton.setLookAndFeel(ButtonLookAndFeel::get());
     delayGroup.addAndMakeVisible(tempoSyncButton);
     
     addAndMakeVisible(delayGroup);
@@ -41,11 +40,12 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : 
     addAndMakeVisible(outputGroup);
     
     setLookAndFeel(&mainLF);
+    
+    mainLF.setTheme(Theme::createDarkTheme());
           
     auto bypassIcon = juce::ImageCache::getFromMemory(BinaryData::Bypass_png, BinaryData::Bypass_pngSize);
     
     bypassButton.setClickingTogglesState(true);
-    bypassButton.setBounds(0, 0, 20, 20);
     bypassButton.setImages(false,
                            true,
                            true,
@@ -61,6 +61,28 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : 
                            0.0f);
     
     addAndMakeVisible(bypassButton);
+    
+    settingsMenu.setText("Settings");
+    settingsMenu.addItem("Light Theme", 1);
+    settingsMenu.addItem("Dark Theme", 2);
+    addAndMakeVisible(settingsMenu);
+    
+    settingsMenu.onChange = [this]() {
+      
+        int selectedId = settingsMenu.getSelectedId();
+        
+        if (selectedId == 1) {
+            mainLF.setTheme(Theme::createLightTheme());
+        } else if (selectedId == 2) {
+            mainLF.setTheme(Theme::createDarkTheme());
+        }
+        
+        repaint();
+    };
+    
+    setResizable(true, true);
+    getConstrainer()->setFixedAspectRatio(1.51);
+    setResizeLimits(500, 330, 750, 495);
     
     setSize (500, 330);
     
@@ -82,8 +104,14 @@ void DelayAudioProcessorEditor::paint (juce::Graphics& g){
     g.setFillType(fillType);
     g.fillRect(getLocalBounds());
     
+    auto backgroundGradient = juce::ColourGradient::vertical(findColour(mainLF.backgroundGradientTopId), 0.0f, findColour(mainLF.backgroundGradientBottomId), getHeight() / 2);
+    
+    
+    g.setGradientFill(backgroundGradient);
+    g.fillRect(getLocalBounds());
+    
     auto rectangleHeader = getLocalBounds().withHeight(40);
-    g.setColour(Colors::header);
+    g.setColour(findColour(mainLF.headerId));
     g.fillRect(rectangleHeader);
     
     auto image = juce::ImageCache::getFromMemory(BinaryData::Logo_png, BinaryData::Logo_pngSize);
@@ -103,31 +131,54 @@ void DelayAudioProcessorEditor::paint (juce::Graphics& g){
 }
 
 void DelayAudioProcessorEditor::resized(){
+
+    auto editorArea = getLocalBounds();
     
-    auto bounds = getLocalBounds();
-    int y = 50;
-    int height = bounds.getHeight() - 60;
+    auto headerArea = editorArea.removeFromTop(40);
+    bypassButton.setBounds(headerArea.removeFromRight(40).reduced(5));
+    settingsMenu.setBounds(headerArea.removeFromRight(100).reduced(5));
     
-    delayGroup.setBounds(10, y, 110, height);
-    outputGroup.setBounds(bounds.getWidth()  - 160, y, 150, height);
-    feedbackGroup.setBounds(delayGroup.getRight() + 10, y,
-                            outputGroup.getX() - delayGroup.getRight() - 20, height);
+    auto mainArea = editorArea.reduced(10);
+    auto delayGroupArea = mainArea.removeFromLeft(int(mainArea.getWidth() * 0.25f)).reduced(5);
+    auto feedbackGroupArea = mainArea.removeFromLeft(int(mainArea.getWidth() * 0.55f)).reduced(5);
+    auto outputGroupArea = mainArea.reduced(5);
     
+    delayGroup.setBounds(delayGroupArea);
+    feedbackGroup.setBounds(feedbackGroupArea);
+    outputGroup.setBounds(outputGroupArea);
     
-    delayTimeKnob.setTopLeftPosition(20, 20);
-    tempoSyncButton.setTopLeftPosition(20, delayTimeKnob.getBottom() + 10);
-    delayNoteKnob.setTopLeftPosition(delayTimeKnob.getX(), delayTimeKnob.getY());
+    // delay group
     
-    feedbackKnob.setTopLeftPosition(20, 20);
-    stereoWidthKnob.setTopLeftPosition(feedbackKnob.getRight() + 20, 20);
-    lowCutKnob.setTopLeftPosition(feedbackKnob.getX(), feedbackKnob.getBottom() + 10);
-    highCutKnob.setTopLeftPosition(lowCutKnob.getRight() + 20, lowCutKnob.getY());
+    int leftMarginDelayGroup = int(delayGroupArea.getWidth() * 0.20f);
+    int topMarginDelayGroup = int(delayGroupArea.getHeight() * 0.07f);
+    int knobWidth = int(delayGroupArea.getWidth() * 0.6f);
+    int knobHeight = int(delayGroupArea.getHeight() * 0.35f);
+    int buttonWidth = int(delayGroupArea.getWidth() * 0.7f);
+    int buttonHeight = int(delayGroupArea.getHeight() * 0.1f);
     
-    mixKnob.setTopLeftPosition(20, 20);
-    gainKnob.setTopLeftPosition(20, mixKnob.getBottom() + 10);
-    levelMeter.setBounds(outputGroup.getWidth()- 45, 30, 30, gainKnob.getBottom() - 30);
+    delayTimeKnob.setBounds(leftMarginDelayGroup, topMarginDelayGroup, knobWidth, knobHeight);
+    tempoSyncButton.setBounds(delayTimeKnob.getX() - 8, delayTimeKnob.getBottom() + 10, buttonWidth,buttonHeight);
+    delayNoteKnob.setBounds(leftMarginDelayGroup, topMarginDelayGroup, knobWidth, knobHeight);
     
-    bypassButton.setTopLeftPosition(bounds.getRight() - bypassButton.getWidth() - 10, 10);
+    // feedback group
+    
+    int leftMarginFeedbackGroup = int(feedbackGroupArea.getWidth() * 0.11f);
+    int topMarginFeedbackGroup = int(feedbackGroupArea.getHeight() * 0.07f);
+    
+    feedbackKnob.setBounds(leftMarginFeedbackGroup, topMarginFeedbackGroup, knobWidth, knobHeight);
+    stereoWidthKnob.setBounds(feedbackKnob.getRight() + 20, topMarginFeedbackGroup, knobWidth, knobHeight);
+    lowCutKnob.setBounds(feedbackKnob.getX(), feedbackKnob.getBottom() + 30, knobWidth, knobHeight);
+    highCutKnob.setBounds(stereoWidthKnob.getX(), stereoWidthKnob.getBottom() + 30, knobWidth, knobHeight);
+    
+    // output group
+    
+    int leftMarginOutputGroup = int(outputGroupArea.getWidth() * 0.11f);
+    int topMarginOutputGroup = int(outputGroupArea.getHeight() * 0.07f);
+    
+    mixKnob.setBounds(leftMarginOutputGroup, topMarginOutputGroup, knobWidth, knobHeight);
+    gainKnob.setBounds(mixKnob.getX(), mixKnob.getBottom() + 30, knobWidth, knobHeight);
+    levelMeter.setBounds(mixKnob.getRight() + 20, topMarginOutputGroup, outputGroupArea.getWidth() / 4, int(outputGroupArea.getHeight() * 0.9f));
+
 }
 
 void DelayAudioProcessorEditor::parameterValueChanged(int, float value){
@@ -140,8 +191,6 @@ void DelayAudioProcessorEditor::parameterValueChanged(int, float value){
         });
     }
             
-    
-    DBG("parameter changed: " << value);
 }
 
 void DelayAudioProcessorEditor::updateDelayKnobs(bool tempoSyncActive){

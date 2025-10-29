@@ -38,7 +38,7 @@ private:
     RotaryKnob mixKnob { "Mix", audioProcessor.apvts, mixParamID};
     RotaryKnob delayTimeKnob { "Time", audioProcessor.apvts, delayTimeParamID};
     RotaryKnob feedbackKnob { "Feedback", audioProcessor.apvts, feedbackParamID, true};
-    RotaryKnob stereoWidthKnob { "Stereo Width", audioProcessor.apvts, stereoWidthParamID, true};
+    RotaryKnob stereoWidthKnob { "Stereo", audioProcessor.apvts, stereoWidthParamID, true};
     RotaryKnob lowCutKnob { "Low Cut", audioProcessor.apvts, lowCutParamID};
     RotaryKnob highCutKnob { "High Cut", audioProcessor.apvts, highCutParamID};
     RotaryKnob delayNoteKnob { "Note", audioProcessor.apvts, delayNoteParamID};
@@ -56,6 +56,8 @@ private:
     LevelMeter levelMeter;
     
     juce::ImageButton bypassButton;
+    
+    juce::ComboBox settingsMenu;
     
     juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment{
         audioProcessor.apvts, bypassParamID.getParamID(), bypassButton

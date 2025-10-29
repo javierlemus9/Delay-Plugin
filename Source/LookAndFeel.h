@@ -8,56 +8,9 @@
   ==============================================================================
 */
 #include <JuceHeader.h>
+#include "Theme.h"
 
 #pragma once
-
-namespace Colors {
-
-    const juce::Colour background {245, 240, 235};
-    const juce::Colour header {40, 40, 40};
-    
-    namespace Group {
-        
-        const juce::Colour label {160, 155, 150};
-        const juce::Colour outline {235, 230, 225};
-    }
-
-    namespace Knob{
-        
-    const juce::Colour trackBackground {205, 200, 195};
-    const juce::Colour trackActive {177, 101, 135};
-    const juce::Colour outline {255, 250, 245};
-    const juce::Colour gradientTop {250, 245, 240};
-    const juce::Colour gradientBottom {240, 235, 230};
-    const juce::Colour dial {100, 100, 100};
-    const juce::Colour dropShadow {195, 190, 185};
-    const juce::Colour label {80, 80, 80};
-    const juce::Colour textBoxBackground {80, 80, 80};
-    const juce::Colour value { 240, 240, 240};
-    const juce::Colour caret {255, 255, 255};
-    }
-    
-    namespace Button{
-        
-        const juce::Colour text {80, 80, 80};
-        const juce::Colour textToggled {40, 40, 40};
-        const juce::Colour background {245, 240, 235};
-        const juce::Colour backgroundToggled {255, 250, 245};
-        const juce::Colour outline {235, 230, 225};
-        const juce::Colour gradientTop {250, 245, 240};
-        const juce::Colour gradientBottom {240, 235, 230};
-        const juce::Colour dropShadow {195, 190, 185};
-    }
-    
-    namespace LevelMeter{
-        
-        const juce::Colour background {245, 240, 235};
-        const juce::Colour tickLine { 200, 200, 200};
-        const juce::Colour tickLabel { 80, 80, 80};
-        const juce::Colour tooLoud { 226, 74, 81};
-        const juce::Colour levelOK { 65, 206, 88};
-    }
-}
 
 class Fonts {
     
@@ -70,20 +23,71 @@ class Fonts {
     Fonts() = delete;
 };
 
-class RotaryKnobLookAndFeel : public juce::LookAndFeel_V4{
-    
+class MainLookAndFeel : public juce::LookAndFeel_V4 {
+  
     public:
-        
-        RotaryKnobLookAndFeel();
     
-        static RotaryKnobLookAndFeel* get(){
+    enum ColourIds {
         
-            static RotaryKnobLookAndFeel instance;
-            return &instance;
+        //main window
+        backgroundGradientTopId = 0x2000100,
+        backgroundGradientBottomId = 0x2000101,
+        headerId = 0x2000102,
+        
+        // group component
+        groupLabelId = 0x2000200,
+        groupOutlineId = 0x2000201,
+        
+        //knob
+        knobTrackBackgroundId = 0x2000300,
+        knobTrackActiveId = 0x2000301,
+        knobOutlineId = 0x2000302,
+        knobGradientTopId = 0x2000303,
+        knobGradientBottomId = 0x2000304,
+        knobDialId = 0x2000305,
+        knobDropShadowId = 0x2000306,
+        knobLabelId = 0x2000307,
+        knobTextBoxBackgroundId = 0x2000308,
+        knobValueId = 0x2000309,
+        knobCaretId = 0x2000310,
+        
+        //button
+        buttonTextId = 0x2000400,
+        buttonTextToggledId = 0x2000401,
+        buttonBackgroundId = 0x2000402,
+        buttonBackgroundToggledId = 0x2000403,
+        buttonOutlineId = 0x2000404,
+        buttonGradientTopId = 0x2000405,
+        buttonGradientBottomId = 0x2000406,
+        buttonDropShadowId = 0x2000407,
+        
+        //level meter
+        levelMeterBackgroundId = 0x2000500,
+        levelMeterTickLineId = 0x2000501,
+        levelMeterTickLabelId = 0x2000502,
+        levelMeterTooLoudId = 0x2000503,
+        levelMeterLevelOKId = 0x2000504
+    };
+    
+    MainLookAndFeel();
+    
+    Theme getCurrentTheme() const {
+        return currentTheme;
     }
+    
+    void setTheme(const Theme &theme);
     
     juce::Font getLabelFont(juce::Label&) override;
     
+    //group methods
+    void drawGroupComponentOutline(juce::Graphics& g,
+                                   int width,
+                                   int height,
+                                   const juce::String& text,
+                                   const juce::Justification& position,
+                                   juce::GroupComponent& group) override;
+    
+    //knob methods
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
                           float sliderPos,float rotaryStartAngle,
                           float rotaryEndAngle, juce::Slider& slider) override;
@@ -95,39 +99,7 @@ class RotaryKnobLookAndFeel : public juce::LookAndFeel_V4{
     void fillTextEditorBackground(juce::Graphics&, int width, int height,
                                   juce::TextEditor&) override;
     
-    private:
-    
-    juce::DropShadow dropShadow {Colors::Knob::dropShadow, 6, {0, 3} };
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotaryKnobLookAndFeel)
-    
-};
-
-class MainLookAndFeel : public juce::LookAndFeel_V4 {
-  
-    public:
-    
-    MainLookAndFeel();
-    
-    juce::Font getLabelFont(juce::Label&) override;
-    
-    private:
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainLookAndFeel)
-};
-
-class ButtonLookAndFeel : public juce::LookAndFeel_V4 {
-    
-    public:
-    
-    ButtonLookAndFeel();
-    
-    static ButtonLookAndFeel* get(){
-        
-        static ButtonLookAndFeel instance;
-        return &instance;
-    }
-    
+    //button methods
     void drawButtonBackground(juce::Graphics& g, juce::Button& button,
                               const juce::Colour& backgroundColour,
                               bool shouldDrawButtonAsHighlighted,
@@ -139,8 +111,11 @@ class ButtonLookAndFeel : public juce::LookAndFeel_V4 {
     
     private:
     
-    juce::DropShadow dropShadow {Colors::Button::dropShadow, 6, {0, 3} };
+    Theme currentTheme;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookAndFeel)
+    juce::DropShadow knobDropShadow {currentTheme.palette.knobDropShadowColor, 6, {0, 3} };
     
+    juce::DropShadow buttonDropShadow {currentTheme.palette.buttonDropShadowColor, 6, {0, 3} };
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainLookAndFeel)
 };

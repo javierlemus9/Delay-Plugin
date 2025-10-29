@@ -19,22 +19,24 @@ juce::Font Fonts::getFont(float height) {
                     .withHeight(height);
 }
 
-
-RotaryKnobLookAndFeel::RotaryKnobLookAndFeel(){
-    
-    setColour(juce::Label::textColourId, Colors::Knob::label);
-    setColour(juce::Slider::textBoxTextColourId, Colors::Knob::label);
-    setColour(juce::Slider::rotarySliderFillColourId, Colors::Knob::trackActive);
-    setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
-    setColour(juce::CaretComponent::caretColourId, Colors::Knob::caret);
-    
+juce::Font MainLookAndFeel::getLabelFont([[maybe_unused]] juce::Label& label) {
+    return Fonts::getFont(label.getLocalBounds().getHeight());
 }
 
-juce::Font RotaryKnobLookAndFeel::getLabelFont([[maybe_unused]] juce::Label& label) {
-    return Fonts::getFont();
+void MainLookAndFeel::drawGroupComponentOutline(juce::Graphics& g,
+                                                int width,
+                                                int height,
+                                                [[maybe_unused]] const juce::String& text,
+                                                const juce::Justification& position,
+                                                juce::GroupComponent& group){
+    
+    auto bounds = juce::Rectangle<int>(width, height).toFloat();
+
+    g.setColour (group.findColour(groupOutlineId));
+    g.fillRect(bounds);
 }
 
-void RotaryKnobLookAndFeel::drawRotarySlider(juce::Graphics& g,
+void MainLookAndFeel::drawRotarySlider(juce::Graphics& g,
                                              int x,
                                              int y,
                                              int width,
@@ -49,20 +51,14 @@ void RotaryKnobLookAndFeel::drawRotarySlider(juce::Graphics& g,
     
     auto path = juce::Path();
     path.addEllipse(knobRect);
-    dropShadow.drawForPath(g, path);
+    knobDropShadow.drawForPath(g, path);
     
-    g.setColour(Colors::Knob::outline);
+    g.setColour(findColour(knobOutlineId));
     g.fillEllipse(knobRect);
     
     auto innerRect = knobRect.reduced(2.0f, 2.0f);
-    auto gradient = juce::ColourGradient(
-                                         Colors::Knob::gradientTop,
-                                         0.0f,
-                                         innerRect.getY(),
-                                         Colors::Knob::gradientBottom,
-                                         0.0f,
-                                         innerRect.getBottom(),
-                                         false);
+    auto gradient = juce::ColourGradient::vertical(findColour(knobGradientTopId), 0.0f, findColour(knobGradientBottomId), innerRect.getHeight());
+    
     g.setGradientFill(gradient);
     g.fillEllipse(innerRect);
     
@@ -85,7 +81,7 @@ void RotaryKnobLookAndFeel::drawRotarySlider(juce::Graphics& g,
                                            juce::PathStrokeType::curved,
                                            juce::PathStrokeType::rounded);
     
-    g.setColour(Colors::Knob::trackBackground);
+    g.setColour(findColour(knobTrackBackgroundId));
     g.strokePath(backgroundArc, strokeType);
     
     auto dialRadius = innerRect.getHeight() / 2.0f - lineWidth;
@@ -100,7 +96,7 @@ void RotaryKnobLookAndFeel::drawRotarySlider(juce::Graphics& g,
     juce::Path dialPath;
     dialPath.startNewSubPath(dialStart);
     dialPath.lineTo(dialEnd);
-    g.setColour(Colors::Knob::dial);
+    g.setColour(findColour(knobDialId));
     g.strokePath(dialPath, strokeType);
     
     if (slider.isEnabled()) {
@@ -124,12 +120,12 @@ void RotaryKnobLookAndFeel::drawRotarySlider(juce::Graphics& g,
     }
 }
 
-void RotaryKnobLookAndFeel::fillTextEditorBackground(juce::Graphics& g,
+void MainLookAndFeel::fillTextEditorBackground(juce::Graphics& g,
                                                     [[maybe_unused]] int width,
                                                      [[maybe_unused]] int height,
                                                      juce::TextEditor& textEditor){
     
-    g.setColour(Colors::Knob::textBoxBackground);
+    g.setColour(findColour(knobTextBoxBackgroundId));
     g.fillRoundedRectangle(textEditor.getLocalBounds().reduced(4, 0).toFloat(),
                            4.0f);
     
@@ -165,7 +161,7 @@ class RotaryKnobLabel : public juce::Label {
     }
 };
 
-juce::Label* RotaryKnobLookAndFeel::createSliderTextBox(juce::Slider& slider) {
+juce::Label* MainLookAndFeel::createSliderTextBox(juce::Slider& slider) {
     
     auto label = new RotaryKnobLabel();
     
@@ -175,45 +171,78 @@ juce::Label* RotaryKnobLookAndFeel::createSliderTextBox(juce::Slider& slider) {
     label->setColour(juce::Label::textColourId,
                      slider.findColour(juce::Slider::textBoxTextColourId));
     
-    label->setColour(juce::TextEditor::textColourId, Colors::Knob::value);
+    label->setColour(juce::TextEditor::textColourId, findColour(knobValueId));
     label->setColour(juce::TextEditor::highlightedTextColourId,
-                     Colors::Knob::value);
+                     findColour(knobValueId));
     
     label->setColour(juce::TextEditor::highlightColourId,
                      slider.findColour(juce::Slider::rotarySliderFillColourId));
     
     label->setColour(juce::TextEditor::backgroundColourId,
-                     Colors::Knob::textBoxBackground);
+                     findColour(knobTextBoxBackgroundId));
     
     return label;
 }
 
 MainLookAndFeel::MainLookAndFeel() {
     
-    setColour(juce::GroupComponent::textColourId, Colors::Group::label);
-    setColour(juce::GroupComponent::outlineColourId, Colors::Group::outline);
+    setTheme(Theme::createDarkTheme());
 }
 
-juce::Font MainLookAndFeel::getLabelFont([[maybe_unused]] juce::Label& label) {
+void MainLookAndFeel::setTheme(const Theme &theme) {
     
-    return Fonts::getFont();
+    // main window
+    setColour(backgroundGradientTopId, theme.palette.backgroundGradientTopColor);
+    setColour(backgroundGradientBottomId, theme.palette.backgroundGradientBottomColor);
+    setColour(headerId,  theme.palette.headerColor);
+    
+    // group component
+    setColour(groupLabelId, theme.palette.groupLabelColor);
+    setColour(groupOutlineId, theme.palette.groupBackgroundColor);
+    
+    // knob
+    setColour(knobTrackBackgroundId, theme.palette.knobTrackBackgroundColor);
+    setColour(knobTrackActiveId, theme.palette.knobTrackActiveColor);
+    setColour(knobOutlineId, theme.palette.knobOutlineColor);
+    setColour(knobGradientTopId, theme.palette.knobGradientTopColor);
+    setColour(knobGradientBottomId, theme.palette.knobGradientBottomColor);
+    setColour(knobDialId, theme.palette.knobDialColor);
+    setColour(knobDropShadowId, theme.palette.knobDropShadowColor);
+    setColour(knobLabelId, theme.palette.knobLabelColor);
+    setColour(knobTextBoxBackgroundId, theme.palette.knobTextBoxBackgroundColor);
+    setColour(knobValueId, theme.palette.knobValueColor);
+    setColour(knobCaretId, theme.palette.knobCaretColor);
+    
+    // button
+    setColour(buttonTextId, theme.palette.buttonTextColor);
+    setColour(buttonTextToggledId, theme.palette.buttonTextToggledColor);
+    setColour(buttonBackgroundId, theme.palette.buttonBackgroundColor);
+    setColour(buttonBackgroundToggledId, theme.palette.buttonBackgroundToggledColor);
+    setColour(buttonOutlineId, theme.palette.buttonOutlineColor);
+    setColour(buttonGradientTopId, theme.palette.buttonGradientTopColor);
+    setColour(buttonGradientBottomId, theme.palette.buttonGradientBottomColor);
+    setColour(buttonDropShadowId, theme.palette.buttonDropShadowColor);
+    
+    // level meter
+    setColour(levelMeterBackgroundId, theme.palette.levelMeterBackgroundColor);
+    setColour(levelMeterTickLineId, theme.palette.levelMeterTickLineColor);
+    setColour(levelMeterTickLabelId, theme.palette.levelMeterTickLabelColor);
+    setColour(levelMeterTooLoudId, theme.palette.levelMeterTooLoudColor);
+    setColour(levelMeterLevelOKId, theme.palette.levelMeterLevelOKColor);
+                                             
+    currentTheme = theme;
     
 }
 
-ButtonLookAndFeel::ButtonLookAndFeel() {
-    
-    setColour(juce::TextButton::textColourOffId, Colors::Button::text);
-    setColour(juce::TextButton::textColourOnId, Colors::Button::textToggled);
-    setColour(juce::TextButton::buttonColourId, Colors::Button::background);
-    setColour(juce::TextButton::buttonOnColourId, Colors::Button::backgroundToggled);
-}
 
-void ButtonLookAndFeel::drawButtonBackground(
-                                             juce::Graphics &g,
-                                             juce::Button &button,
-                                             const juce::Colour &backgroundColour,
-                                             [[maybe_unused]]bool shouldDrawButtonAsHighlighted,
-                                             bool shouldDrawButtonAsDown){
+
+
+void MainLookAndFeel::drawButtonBackground(
+                                           juce::Graphics &g,
+                                           juce::Button &button,
+                                           [[maybe_unused]]const juce::Colour &backgroundColour,
+                                           [[maybe_unused]]bool shouldDrawButtonAsHighlighted,
+                                           bool shouldDrawButtonAsDown){
     
     auto bounds = button.getLocalBounds().toFloat();
     auto cornerSize = bounds.getHeight() * 0.25f;
@@ -221,14 +250,14 @@ void ButtonLookAndFeel::drawButtonBackground(
     
     auto path = juce::Path();
     path.addRoundedRectangle(buttonRect, cornerSize);
-    dropShadow.drawForPath(g, path);
+    buttonDropShadow.drawForPath(g, path);
     
     auto innerRect = buttonRect.reduced(2.0f, 2.0f);
     auto gradient = juce::ColourGradient(
-                                         Colors::Button::gradientTop,
+                                         findColour(buttonGradientTopId),
                                          0.0f,
                                          innerRect.getY(),
-                                         Colors::Button::gradientBottom,
+                                         findColour(buttonGradientBottomId),
                                          0.0f,
                                          innerRect.getBottom(),
                                          false);
@@ -240,16 +269,16 @@ void ButtonLookAndFeel::drawButtonBackground(
         buttonRect.translate(0.0f, 1.0f);
     }
     
-    g.setColour(backgroundColour);
+    g.setColour(findColour(buttonBackgroundId));
     g.fillRoundedRectangle(buttonRect, cornerSize);
     
-    g.setColour(Colors::Button::outline);
+    g.setColour(findColour(buttonOutlineId));
     g.drawRoundedRectangle(buttonRect, cornerSize, 2.0f);
     
 
 }
 
-void ButtonLookAndFeel::drawButtonText(
+void MainLookAndFeel::drawButtonText(
                                        juce::Graphics &g,
                                        juce::TextButton &button,
                                        [[maybe_unused]]bool shouldDrawButtonAsHighlighted,
@@ -262,10 +291,10 @@ void ButtonLookAndFeel::drawButtonText(
         buttonRect.translate(0.0f, 1.0f);
     }
     
-    if (button.getToggleState()) {
-        g.setColour(button.findColour(juce::TextButton::textColourOnId));
+    if (!button.getToggleState()) {
+        g.setColour(button.findColour(buttonTextId));
     } else {
-        g.setColour(button.findColour(juce::TextButton::textColourOffId));
+        g.setColour(button.findColour(buttonTextToggledId));
     }
     
     g.setFont(Fonts::getFont());
