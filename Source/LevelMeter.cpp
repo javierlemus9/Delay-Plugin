@@ -32,7 +32,7 @@ void LevelMeter::paint (juce::Graphics& g){
 
     const auto bounds = getLocalBounds();
     
-    g.fillAll(Colors::LevelMeter::background);
+    g.fillAll(findColour(MainLookAndFeel::levelMeterBackgroundId));
     g.setFont(Fonts::getFont(10.0f));
     
     drawlevel(g, dbLevelL, 0, 7);
@@ -41,10 +41,10 @@ void LevelMeter::paint (juce::Graphics& g){
     for (float db = maxdB; db >= mindB; db -= stepdB) {
         int y = positionForLevel(db);
         
-        g.setColour(Colors::LevelMeter::tickLine);
+        g.setColour(findColour(MainLookAndFeel::levelMeterTickLineId));
         g.fillRect(0, y, 16, 1);
         
-        g.setColour(Colors::LevelMeter::tickLabel);
+        g.setColour(findColour(MainLookAndFeel::levelMeterTickLabelId));
         g.drawSingleLineText(juce::String(int(db)), bounds.getWidth(), y + 3, juce::Justification::right);
     }
 }
@@ -70,12 +70,12 @@ void LevelMeter::drawlevel(juce::Graphics& g, float level, int x, int width){
     
     if (level > 0.0f) {
         int y0 = positionForLevel(0.0f);
-        g.setColour(Colors::LevelMeter::tooLoud);
+        g.setColour(findColour(MainLookAndFeel::levelMeterTooLoudId));
         g.fillRect(x, y, width, y0 - y);
-        g.setColour(Colors::LevelMeter::levelOK);
+        g.setColour(findColour(MainLookAndFeel::levelMeterLevelOKId));
         g.fillRect(x, y0, width, getHeight() - y0);
     } else if (y < getHeight()) {
-        g.setColour(Colors::LevelMeter::levelOK);
+        g.setColour(findColour(MainLookAndFeel::levelMeterLevelOKId));
         g.fillRect(x, y, width, getHeight() - y);
     }
 }
