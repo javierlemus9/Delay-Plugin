@@ -23,6 +23,8 @@ Theme Theme::createLightTheme(){
     theme.palette.groupLabelColor = juce::Colour(160, 155, 150);
     theme.palette.groupBackgroundColor = juce::Colour(0xFFC6DD90);
     
+    theme.palette.settingsIconColor = juce::Colour(0xFF000000);
+    
     theme.palette.knobTrackBackgroundColor = juce::Colour(205, 200, 195);
     theme.palette.knobTrackActiveColor = juce::Colour(177, 101, 135);
     theme.palette.knobOutlineColor = juce::Colour(0x80C6DD90);
@@ -64,6 +66,8 @@ Theme Theme::createDarkTheme(){
     
     theme.palette.groupLabelColor = juce::Colour(0xFFFFFFFF);
     theme.palette.groupBackgroundColor = juce::Colour(0xFF324701);
+    
+    theme.palette.settingsIconColor = juce::Colour(0xFFFFFFFF);
     
     theme.palette.knobTrackBackgroundColor = juce::Colour(205, 200, 195);
     theme.palette.knobTrackActiveColor = juce::Colour(177, 101, 135);

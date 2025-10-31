@@ -14,6 +14,8 @@
 #include "RotaryKnob.h"
 #include "LookAndFeel.h"
 #include "LevelMeter.h"
+#include "Theme.h"
+#include "SettingsMenu.h"
 
 //==============================================================================
 /**
@@ -31,6 +33,9 @@ public:
 
 private:
 
+    MainLookAndFeel mainLF;
+    
+    SettingsMenu settingsMenu;
   
     DelayAudioProcessor& audioProcessor;
     
@@ -51,13 +56,11 @@ private:
     
     juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
     
-    MainLookAndFeel mainLF;
-    
     LevelMeter levelMeter;
     
     juce::ImageButton bypassButton;
     
-    juce::ComboBox settingsMenu;
+    
     
     juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment{
         audioProcessor.apvts, bypassParamID.getParamID(), bypassButton

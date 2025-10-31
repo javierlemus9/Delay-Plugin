@@ -31,9 +31,10 @@ void MainLookAndFeel::drawGroupComponentOutline(juce::Graphics& g,
                                                 juce::GroupComponent& group){
     
     auto bounds = juce::Rectangle<int>(width, height).toFloat();
+    auto cornerSize = 10.0f;
 
     g.setColour (group.findColour(groupOutlineId));
-    g.fillRect(bounds);
+    g.fillRoundedRectangle(bounds, cornerSize);
 }
 
 void MainLookAndFeel::drawRotarySlider(juce::Graphics& g,
@@ -186,7 +187,7 @@ juce::Label* MainLookAndFeel::createSliderTextBox(juce::Slider& slider) {
 
 MainLookAndFeel::MainLookAndFeel() {
     
-    setTheme(Theme::createDarkTheme());
+    setTheme(getCurrentTheme());
 }
 
 void MainLookAndFeel::setTheme(const Theme &theme) {
@@ -199,6 +200,9 @@ void MainLookAndFeel::setTheme(const Theme &theme) {
     // group component
     setColour(groupLabelId, theme.palette.groupLabelColor);
     setColour(groupOutlineId, theme.palette.groupBackgroundColor);
+    
+    // settings
+    setColour(settingsIconId, theme.palette.settingsIconColor);
     
     // knob
     setColour(knobTrackBackgroundId, theme.palette.knobTrackBackgroundColor);
@@ -233,9 +237,6 @@ void MainLookAndFeel::setTheme(const Theme &theme) {
     currentTheme = theme;
     
 }
-
-
-
 
 void MainLookAndFeel::drawButtonBackground(
                                            juce::Graphics &g,
