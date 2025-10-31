@@ -38,35 +38,38 @@ class MainLookAndFeel : public juce::LookAndFeel_V4 {
         groupLabelId = 0x2000200,
         groupOutlineId = 0x2000201,
         
+        //settings menu
+        settingsIconId = 0x2000300,
+        
         //knob
-        knobTrackBackgroundId = 0x2000300,
-        knobTrackActiveId = 0x2000301,
-        knobOutlineId = 0x2000302,
-        knobGradientTopId = 0x2000303,
-        knobGradientBottomId = 0x2000304,
-        knobDialId = 0x2000305,
-        knobDropShadowId = 0x2000306,
-        knobLabelId = 0x2000307,
-        knobTextBoxBackgroundId = 0x2000308,
-        knobValueId = 0x2000309,
-        knobCaretId = 0x2000310,
+        knobTrackBackgroundId = 0x2000400,
+        knobTrackActiveId = 0x2000401,
+        knobOutlineId = 0x2000402,
+        knobGradientTopId = 0x2000403,
+        knobGradientBottomId = 0x2000404,
+        knobDialId = 0x2000405,
+        knobDropShadowId = 0x2000406,
+        knobLabelId = 0x2000407,
+        knobTextBoxBackgroundId = 0x2000408,
+        knobValueId = 0x2000409,
+        knobCaretId = 0x2000410,
         
         //button
-        buttonTextId = 0x2000400,
-        buttonTextToggledId = 0x2000401,
-        buttonBackgroundId = 0x2000402,
-        buttonBackgroundToggledId = 0x2000403,
-        buttonOutlineId = 0x2000404,
-        buttonGradientTopId = 0x2000405,
-        buttonGradientBottomId = 0x2000406,
-        buttonDropShadowId = 0x2000407,
+        buttonTextId = 0x2000500,
+        buttonTextToggledId = 0x2000501,
+        buttonBackgroundId = 0x2000502,
+        buttonBackgroundToggledId = 0x2000503,
+        buttonOutlineId = 0x2000504,
+        buttonGradientTopId = 0x2000505,
+        buttonGradientBottomId = 0x2000506,
+        buttonDropShadowId = 0x2000507,
         
         //level meter
-        levelMeterBackgroundId = 0x2000500,
-        levelMeterTickLineId = 0x2000501,
-        levelMeterTickLabelId = 0x2000502,
-        levelMeterTooLoudId = 0x2000503,
-        levelMeterLevelOKId = 0x2000504
+        levelMeterBackgroundId = 0x2000600,
+        levelMeterTickLineId = 0x2000601,
+        levelMeterTickLabelId = 0x2000602,
+        levelMeterTooLoudId = 0x2000603,
+        levelMeterLevelOKId = 0x2000604
     };
     
     MainLookAndFeel();

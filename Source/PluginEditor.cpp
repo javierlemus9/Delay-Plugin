@@ -8,7 +8,6 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "Theme.h"
 
 //==============================================================================
 DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : AudioProcessorEditor (&p), audioProcessor (p), levelMeter(p.levelL, p.levelR){
@@ -39,9 +38,7 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : 
     outputGroup.addAndMakeVisible(levelMeter);
     addAndMakeVisible(outputGroup);
     
-    setLookAndFeel(&mainLF);
-    
-    mainLF.setTheme(Theme::createDarkTheme());
+
           
     auto bypassIcon = juce::ImageCache::getFromMemory(BinaryData::Bypass_png, BinaryData::Bypass_pngSize);
     
@@ -62,23 +59,23 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p) : 
     
     addAndMakeVisible(bypassButton);
     
-    settingsMenu.setText("Settings");
-    settingsMenu.addItem("Light Theme", 1);
-    settingsMenu.addItem("Dark Theme", 2);
     addAndMakeVisible(settingsMenu);
     
-    settingsMenu.onChange = [this]() {
-      
-        int selectedId = settingsMenu.getSelectedId();
+    setLookAndFeel(&mainLF);
+    mainLF.setTheme(Theme::createDarkTheme());
+    
+    settingsMenu.onThemeChange = [this](int themeId){
         
-        if (selectedId == 1) {
+        if (themeId == SettingsMenu::MenuItemIDs::LightTheme) {
             mainLF.setTheme(Theme::createLightTheme());
-        } else if (selectedId == 2) {
+        } else if (themeId == SettingsMenu::MenuItemIDs::DarkTheme) {
             mainLF.setTheme(Theme::createDarkTheme());
         }
         
         repaint();
     };
+        
+
     
     setResizable(true, true);
     getConstrainer()->setFixedAspectRatio(1.51);
@@ -105,7 +102,6 @@ void DelayAudioProcessorEditor::paint (juce::Graphics& g){
     g.fillRect(getLocalBounds());
     
     auto backgroundGradient = juce::ColourGradient::vertical(findColour(mainLF.backgroundGradientTopId), 0.0f, findColour(mainLF.backgroundGradientBottomId), getHeight() / 2);
-    
     
     g.setGradientFill(backgroundGradient);
     g.fillRect(getLocalBounds());
